@@ -1,3 +1,13 @@
+from flask import Flask, request, jsonify
+import qrcode
+import base64
+from io import BytesIO
+
+app = Flask(__name__)
+
+@app.route("/generate", methods=["POST"])
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import random as rd
@@ -832,6 +842,9 @@ main()
 plt.axis('off')
 plt.show()
 
+if __name__ == "__main__":
+    app.run(debug=True)
+
 
 ##
 
@@ -841,16 +854,5 @@ verif 25% : cacher 156.25 cases
 verif 30% : cacher 187.5 cases
 
 -> varier les zones d'abstraction
-
-
-
-
-
-
-
-
-
-
-
 
 
