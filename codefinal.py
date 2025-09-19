@@ -1,28 +1,12 @@
 from flask import Flask, request, jsonify
-import qrcode
-import base64
-from io import BytesIO
+import io
+import numpy as np
+from PIL import Image
+import random as rd
 
 app = Flask(__name__)
 
-@app.route("/generate", methods=["POST"])
-
-from flask import send_from_directory
-
-@app.route("/")
-def index():
-    return send_from_directory(".", "codeqr.html")
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-import random as rd
-
 # Etape 0 : on définit les cases à ne pas modifier
-
-import numpy as np
-import matplotlib.pyplot as plt
-
 
 def chemin(L):
 
@@ -769,13 +753,7 @@ def afficher(M,k): # affiche le tableau sous la forme d'un code qr
             else :
                 M[i][j] = 1
     penalite = penal1(M) + penal2(M) + penal3(M) + penal4(M)
-    plt.axis('off')
-    plt.subplot(2, 4, k+1)
-    plt.title(f'm{k}, {penalite}',y = -.3)
-    plt.imshow(M, cmap = plt.cm.grey, vmin = 0, vmax = 1) # 0 = noir, 1 = blanc
-
-
-
+    return M
 
 def qr2(Tab):   # zones invariantes
     for [a,b] in IN:
@@ -816,25 +794,15 @@ def main2(k,r,m,z,w):
     l2 = mots_correction(recup_coef_gene(l1))
     l2 = join_liste_int_10_to_2_str(l2)
     l += l2
-    print(l)
     t = str_to_int(l)
     q = qr()
     r = remplissage(q,t)
     r,L1 = masques(r,k)                      # i est le numéro du masque, on applique le masque
     r = qr2(r)                              # on pose les zones invariantes
     pr = patterns(r,str_to_int(sep2(L1)))    # on insère la chaine d'information de format
-    if z == 'y':
-        print('1')
-        pr = test(pr,w)
-        afficher(pr,k)
-    if z == 'n':
-        afficher(pr,k)
-    plt.suptitle(m,fontsize=16)
 
 
-def main():
-    r = 'o' # input("type d'encodage : [a] pour alphanumérique ou [o] pour octet -> ")
-    m = 'HELLO  WORLD' # input('saisir un court texte à transformer en code QR : ') # "HELLO WORLD"
+def main(r,m):
     z = 'n' # input('faire un  test de correction : [y] ou [n] -> ')
     w = '0'
     if z == 'y':
@@ -842,24 +810,36 @@ def main():
     for k in range(8):
         main2(k,r,m,z,w)
 
+def qr_matrix_to_png(matrix):
+    """Convertit une matrice 0/1 en image PNG en mémoire"""
+    arr = np.array(matrix, dtype=np.uint8) * 255  # 0 = noir, 255 = blanc
+    img = Image.fromarray(arr, mode="L")          # "L" = niveaux de gris
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    return buf
 
-plt.close()
-main()
-plt.axis('off')
-plt.show()
+
+
+@app.route("/")
+def home():
+    return jsonify({"message": "Bienvenue sur l'API QR Code"})
+
+@app.route("/generate", methods=["POST"])
+
+def generate_qr(encod,mot): # encode --> "o" ou "a"
+    """Génère un QR code PNG à partir du texte fourni"""
+    data = request.json.get("text", "")
+    if not data:
+        return {"error": "Aucun texte fourni"}, 400
+    pr = main(encod,mot)
+
+    # Conversion en PNG
+    buf = qr_matrix_to_png(pr)
+
+    return send_file(buf, mimetype="image/png")
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-##
-
-verif 7% : cacher 43.75 cases
-verif 15% : cacher 93.75 cases
-verif 25% : cacher 156.25 cases
-verif 30% : cacher 187.5 cases
-
--> varier les zones d'abstraction
-
 
 
