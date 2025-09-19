@@ -3,6 +3,9 @@ import io
 import numpy as np
 from PIL import Image
 import random as rd
+from flask_cors import CORS
+
+CORS(app)
 
 app = Flask(__name__)
 
@@ -841,5 +844,6 @@ def generate_qr(encod,mot): # encode --> "o" ou "a"
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
