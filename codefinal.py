@@ -5,9 +5,9 @@ from PIL import Image
 import random as rd
 from flask_cors import CORS
 
+app = Flask(__name__)
 CORS(app)
 
-app = Flask(__name__)
 
 # Etape 0 : on définit les cases à ne pas modifier
 
@@ -824,13 +824,8 @@ def qr_matrix_to_png(matrix):
 
 
 
-@app.route("/")
-def home():
-    return jsonify({"message": "Bienvenue sur l'API QR Code"})
-
 @app.route("/generate", methods=["POST"])
 
-@app.route("/generate", methods=["POST"])
 def generate_qr():
     """Génère un QR code PNG à partir du texte fourni"""
     data = request.json.get("text", "")
@@ -872,9 +867,13 @@ def generate_qr(encod,mot): # encode --> "o" ou "a"
 
     return send_file(buf, mimetype="image/png")
     '''
-
+@app.route("/")
+def home():
+    return {"status": "ok"}
+    
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
