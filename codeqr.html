@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dictionnaire d'acronymes</title>
+</head>
+<body>
+    <form role="search">
+        <label for="acronym-search">Rechercher un acronyme :</label>
+        <input type="search" id="acronym-search" placeholder="Ex: HTML" list="acronyms">
+        <datalist id="acronyms"></datalist>
+    </form>
+    
+    <p id="result-display"></p>
+
+    <script>
+    const searchInput = document.getElementById('acronym-search');
+    const resultDisplay = document.getElementById('result-display');
+    const datalist = document.getElementById('acronyms');
+
+    // 🔗 Mets ici l'URL publique de ton API Flask
+    const API_URL = '/api/acronyms';
+
+    // Récupère les données de l'API Flask
+    fetch(API_URL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur de réseau ou serveur non disponible');
+            }
+            return response.json();
+        })
+        .then(acronyms => {
+            // Remplir la datalist avec les acronymes
+            for (const acronym in acronyms) {
+                const option = document.createElement('option');
+                option.value = acronym;
+                datalist.appendChild(option);
+            }
+
+            // Ajoute un écouteur d'événement pour la recherche
+            searchInput.addEventListener('input', (event) => {
+                const searchTerm = event.target.value.toUpperCase();
+                const definition = acronyms[searchTerm];
+
+                if (definition) {
+                    resultDisplay.textContent = `${searchTerm} : ${definition}`;
+                } else {
+                    resultDisplay.textContent = 'Aucune définition trouvée.';
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des données:', error);
+            resultDisplay.textContent = 'Erreur : Impossible de charger le dictionnaire.';
+        });
+    </script>
+</body>
+</html>
