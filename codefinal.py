@@ -7,6 +7,12 @@ app = Flask(__name__)
 
 @app.route("/generate", methods=["POST"])
 
+from flask import send_from_directory
+
+@app.route("/")
+def index():
+    return send_from_directory(".", "codeqr.html")
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -854,5 +860,6 @@ verif 25% : cacher 156.25 cases
 verif 30% : cacher 187.5 cases
 
 -> varier les zones d'abstraction
+
 
 
