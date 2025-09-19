@@ -830,6 +830,36 @@ def home():
 
 @app.route("/generate", methods=["POST"])
 
+@app.route("/generate", methods=["POST"])
+def generate_qr():
+    """Génère un QR code PNG à partir du texte fourni"""
+    data = request.json.get("text", "")
+    encod = request.json.get("encod", "o")  # "o" = octet, "a" = alphanumérique
+    
+    if not data:
+        return {"error": "Aucun texte fourni"}, 400
+
+    # Choix de l’encodage
+    if encod == "a":
+        l = codage_alpha(data)
+    else:
+        l = codage_octet(data)
+
+    # Remplissage et génération
+    l += "0" * (224 - len(l))
+    t = str_to_int(l)
+    q = qr()
+    r = remplissage(q, t)
+    r, L1 = masques(q, 0)   # masque par défaut
+    r = qr2(r)
+    pr = patterns(r, str_to_int(sep2(L1)))
+
+    # Conversion PNG
+    buf = qr_matrix_to_png(pr)
+    return send_file(buf, mimetype="image/png")
+
+
+'''
 def generate_qr(encod,mot): # encode --> "o" ou "a"
     """Génère un QR code PNG à partir du texte fourni"""
     data = request.json.get("text", "")
@@ -841,9 +871,11 @@ def generate_qr(encod,mot): # encode --> "o" ou "a"
     buf = qr_matrix_to_png(pr)
 
     return send_file(buf, mimetype="image/png")
+    '''
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
