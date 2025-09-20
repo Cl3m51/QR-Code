@@ -812,7 +812,7 @@ def main(r,m):
     if z == 'y':
         w = '10' # input('quel niveau de test ? [7] ou [15] ou [25] ou [30]')
     for k in range(8):
-        main2(k,r,m,z,w)
+         return main2(k,r,m,z,w)
 
 def qr_matrix_to_png(matrix, scale=10):
     """Convertit une matrice 0/1 en PNG, en agrandissant chaque module"""
@@ -836,17 +836,6 @@ def generate_qr():
     
     if not data:
         return {"error": "Aucun texte fourni"}, 400
-
-    # Choix de l’encodage
-    l = codage_octet(data)
-    l += "0" * (224 - len(l))
-
-    t = str_to_int(l)
-    q = qr()
-    r = remplissage(q, t)
-    r, L1 = masques(q, 0)   # masque par défaut
-    r = qr2(r)
-    pr = patterns(r, str_to_int(sep2(L1)))
     pr = main(encod, data)
     # Conversion PNG
     buf = qr_matrix_to_png(pr)
@@ -858,6 +847,7 @@ def home():
     
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
