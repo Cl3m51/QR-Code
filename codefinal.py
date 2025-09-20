@@ -837,23 +837,9 @@ def generate_qr():
         return {"error": "Aucun texte fourni"}, 400
 
     # Choix de l’encodage
-    if encod == "a":
-        l = codage_alpha(data)
-    else:
-        l = codage_octet(data)
+    l = codage_octet(data)
+    l += "0" * (224 - len(l))
 
-    # Remplissage et génération
-    if encod == "a":
-        l = codage_alpha(data)
-    else:
-        l = codage_octet(data)
-
-# Vérifie la taille maximale
-    if len(l) > 224:
-        return {"error": f"Texte trop long ({len(l)} bits), maximum 224 bits"}, 400
-
-# Complète avec des zéros si besoin
-    l = l.ljust(224, "0")
     t = str_to_int(l)
     q = qr()
     r = remplissage(q, t)
@@ -871,6 +857,7 @@ def home():
     
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
