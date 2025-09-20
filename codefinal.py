@@ -811,8 +811,9 @@ def main(r,m):
     w = '0'
     if z == 'y':
         w = '10' # input('quel niveau de test ? [7] ou [15] ou [25] ou [30]')
-    for k in range(8):
-         return main2(k,r,m,z,w)
+#    for k in range(8):
+#         return main2(k,r,m,z,w)
+    return main2(0,r,m,z,w)
 
 def qr_matrix_to_png(matrix, scale=10):
     """Convertit une matrice 0/1 en PNG, en agrandissant chaque module"""
@@ -847,6 +848,7 @@ def home():
     
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
