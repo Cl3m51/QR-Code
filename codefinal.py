@@ -813,14 +813,16 @@ def main(r,m):
     for k in range(8):
         main2(k,r,m,z,w)
 
-def qr_matrix_to_png(matrix):
-    """Convertit une matrice 0/1 en image PNG en mémoire"""
-    arr = np.array(matrix, dtype=np.uint8) * 255  # 0 = noir, 255 = blanc
-    img = Image.fromarray(arr, mode="L")          # "L" = niveaux de gris
+def qr_matrix_to_png(matrix, scale=10):
+    """Convertit une matrice 0/1 en PNG, en agrandissant chaque module"""
+    arr = np.array(matrix, dtype=np.uint8) * 255
+    img = Image.fromarray(arr, mode="L")
+    img = img.resize((img.size[0]*scale, img.size[1]*scale), Image.NEAREST)
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     buf.seek(0)
     return buf
+
 
 
 
@@ -863,26 +865,13 @@ def generate_qr():
     buf = qr_matrix_to_png(pr)
     return send_file(buf, mimetype="image/png")
 
-
-'''
-def generate_qr(encod,mot): # encode --> "o" ou "a"
-    """Génère un QR code PNG à partir du texte fourni"""
-    data = request.json.get("text", "")
-    if not data:
-        return {"error": "Aucun texte fourni"}, 400
-    pr = main(encod,mot)
-
-    # Conversion en PNG
-    buf = qr_matrix_to_png(pr)
-
-    return send_file(buf, mimetype="image/png")
-    '''
 @app.route("/")
 def home():
     return {"status": "ok"}
     
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
