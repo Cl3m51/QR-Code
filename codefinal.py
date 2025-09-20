@@ -755,7 +755,6 @@ def afficher(M,k): # affiche le tableau sous la forme d'un code qr
                 M[i][j] = 0
             else :
                 M[i][j] = 1
-    penalite = penal1(M) + penal2(M) + penal3(M) + penal4(M)
     return M
 
 def qr2(Tab):   # zones invariantes
@@ -803,6 +802,8 @@ def main2(k,r,m,z,w):
     r,L1 = masques(r,k)                      # i est le numéro du masque, on applique le masque
     r = qr2(r)                              # on pose les zones invariantes
     pr = patterns(r,str_to_int(sep2(L1)))    # on insère la chaine d'information de format
+    pr = afficher(pr,k)
+    return pr
 
 
 def main(r,m):
@@ -846,7 +847,7 @@ def generate_qr():
     r, L1 = masques(q, 0)   # masque par défaut
     r = qr2(r)
     pr = patterns(r, str_to_int(sep2(L1)))
-
+    pr = main(encod, data)
     # Conversion PNG
     buf = qr_matrix_to_png(pr)
     return send_file(buf, mimetype="image/png")
@@ -857,6 +858,7 @@ def home():
     
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
